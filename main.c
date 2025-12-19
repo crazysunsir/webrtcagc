@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 //采用https://github.com/mackron/dr_libs/blob/master/dr_wav.h 解码
 #define DR_WAV_IMPLEMENTATION
 
@@ -153,9 +154,18 @@ int agcProcess(int16_t *buffer, uint32_t sampleRate, size_t samplesCount, int16_
     if (buffer == nullptr) return -1;
     if (samplesCount == 0) return -1;
     WebRtcAgcConfig agcConfig;
-    agcConfig.compressionGaindB = 9; // default 9 dB
+    // 增益配置参数说明：
+    // compressionGaindB: 压缩增益，范围建议 0-30 dB，默认 9 dB
+    //   - 控制最大可应用的增益值
+    //   - 值越大，低音量信号被放大的程度越高
+    agcConfig.compressionGaindB = 12; // default 9 dB
+    // limiterEnable: 限幅器开关，防止信号削波和失真
     agcConfig.limiterEnable = 1; // default kAgcTrue (on)
-    agcConfig.targetLevelDbfs = 3; // default 3 (-3 dBOv)
+    // targetLevelDbfs: 目标电平，范围 0-31，默认 3 (-3 dBOv)
+    //   - 表示期望的输出信号电平（负值，单位 dBOv）
+    //   - 值越小，目标电平越高（音量越大）
+    //   - 值越大，目标电平越低（音量越小）
+    agcConfig.targetLevelDbfs = 1; // default 3 (-3 dBOv)
     int minLevel = 0;
     int maxLevel = 255;
     size_t samples = MIN(160, sampleRate / 100);
@@ -231,9 +241,13 @@ void auto_gain(char *in_file, char *out_file) {
     int16_t *inBuffer = wavRead_int16(in_file, &sampleRate, &inSampleCount, &channels);
     //如果加载成功
     if (inBuffer != nullptr) {
-        //  kAgcModeAdaptiveAnalog  模拟音量调节
-        //  kAgcModeAdaptiveDigital 自适应增益
-        //  kAgcModeFixedDigital 固定增益
+        // 增益模式说明：
+        // kAgcModeUnchanged (0)      - 不变模式，仅饱和保护
+        // kAgcModeAdaptiveAnalog (1) - 自适应模拟增益控制（需要硬件支持）
+        // kAgcModeAdaptiveDigital (2)- 自适应数字增益控制（纯软件，推荐）
+        // kAgcModeFixedDigital (3)   - 固定数字增益（固定增益值）
+        // 
+        // 当前使用 kAgcModeAdaptiveDigital，会根据输入信号自动调整增益
         double startTime = now();
 
         agcProcess(inBuffer, sampleRate, inSampleCount, kAgcModeAdaptiveDigital);
