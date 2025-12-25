@@ -8,7 +8,7 @@ package agc
 // -lm: 链接数学库
 // -Wl,-rpath,${SRCDIR}/../../build: 设置运行时库搜索路径，确保能找到 dylib
 #cgo LDFLAGS: -L${SRCDIR}/../../build -lagc -lm -Wl,-rpath,${SRCDIR}/../../build
-#include "agc_wrapper.h"
+#include "../agc_wrapper.h"
 #include <stdlib.h>
 */
 import "C"
