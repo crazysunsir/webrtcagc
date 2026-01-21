@@ -1,8 +1,6 @@
-# WebRTC_AGC
-Automatic Gain Control Module Port From WebRTC
+WebRTC AGC for Go
 
-# Donating
+A Go implementation / wrapper of WebRTC Automatic Gain Control (AGC) module,
+ported from the original WebRTC audio processing library.
 
-If you found this project useful, consider buying me a coffee
-
-<a href="https://www.buymeacoffee.com/gaozhihan" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/black_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+This project provides a lightweight and practical AGC solution for real-time speech processing, especially suitable for VoIP, streaming audio, ASR front-end, and voice bots.
