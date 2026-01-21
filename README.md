@@ -1,4 +1,4 @@
-WebRTC AGC for Go
+# WebRTC AGC for Go
 
 A Go implementation / wrapper of WebRTC Automatic Gain Control (AGC) module,
 ported from the original WebRTC audio processing library.
